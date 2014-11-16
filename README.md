@@ -1,8 +1,7 @@
-<html>
 <h2><u>bencode-pretty</u></h2>
 
 <p>This code is for two programs to create a "pretty" version of a bencoded file
-that can easily be examined and edited. And athird program to "unpretty" it again
+that can easily be examined and edited. And a third program to "unpretty" it again
 after editing.
 
 <p>For an explanation of bencoding see for example:
@@ -23,20 +22,19 @@ make clean
 
 <p>I have tested with Linux, Cygwin and MSYS/MinGW.
 
-<p>There are three executables: bencode_pretty, bencode_prettier and bencode_unpretty.
+<p>Building produces three executables: "bencode_pretty", "bencode_prettier" and "bencode_unpretty".
 Each is a filter, meant to be run like this:
 <pre>
 cat some_file.torrent | ./bencode_pretty > some_file.torrent.txt
 </pre>
 
-<p>The executables created:
 <dl>
 <dt><b>bencode_pretty</b>
 <dd>
 Modifies the encoding of strings (see the references above) so that there is
 no length field preceding it, enclosing in quotes (") instead. And within the
 strings non-printable characters are encoded using "," as an escape character
-(because "," seems unlikely to appear in either tracker URL-s or file paths.
+(because "," seems unlikely to appear in either tracker URL-s or file paths).
 The resulting file will have a single line of text.
 <p>
 <dt><b>bencode_prettier</b>
@@ -50,4 +48,3 @@ inserted. So on Windows use an editor such as <a target=_blank href="http://note
 Takes "pretty" or "prettier" files and recreates bencode. The idea is that
 you will have changed some string(s) for tracker URL-s or file paths.
 <p>
-</html>
