@@ -4,7 +4,7 @@ bencode-pretty
 This code is for two programs to create a "pretty" version of a bencoded file
 that can be easily examined and edited, and another to "unpretty" it again.
 
-For an explanation of bencooding see:
+For an explanation of bencoding see:
 
 - "Bencoding" in https://wiki.theory.org/BitTorrentSpecification
 
