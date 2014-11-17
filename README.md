@@ -1,7 +1,7 @@
 <h2><u>bencode-pretty</u></h2>
 
-<p>This code is for two programs to create a "pretty" version of a bencoded file
-that can easily be examined and edited. And a third program to "unpretty" it again
+<p>This code is for three programs to create a "pretty" version of a bencoded file
+that can easily be examined and edited. And a fourth program to "unpretty" it again
 after editing.
 
 <p>For an explanation of bencoding see for example:
