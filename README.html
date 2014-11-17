@@ -24,7 +24,10 @@ popd
 
 </pre>
 
-<p>I have tested with Linux, Cygwin and MSYS/MinGW.
+<p>I have tested with
+<a target=_blank href="https://www.debian.org/">Linux</a>,
+<a target=_blank href="https://www.cygwin.com/">Cygwin</a> and
+<a target=_blank href="http://www.mingw.org/wiki/MSYS">MSYS/MinGW</a>.
 
 <p>Building produces <b><u>three executables</u></b>: "bencode_pretty", "bencode_prettier" and "bencode_unpretty".
 Each is a filter, meant to be run like this:
@@ -68,8 +71,11 @@ popd
 
 </pre>
 The file that is produced ("many_rtorrents.txt" in the example) is itself a script. It
-should be run in an empty directory within the directory where "bencode_unpretty" et al
-were built (it checks this) like this (for example):
+should be run in an empty directory (it checks to be sure the current directory is
+empty). Either this empty directory should be within the directory where
+"bencode_unpretty" et al were built, or "bencode_unpretty" must be in the
+program lookup path ("PATH" environment variable) when the script is run 
+("which bencode_unpretty"). So it could be called like this (for example):
 <pre>
 pushd ~/bencode-pretty
 mkdir work_new
