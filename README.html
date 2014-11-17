@@ -89,9 +89,15 @@ popd
 <p>The idea in this example is that an rtorrent installation is being copied to another
 server or under a different user (a different "slot" on a seedbox for example) where
 the absolute path for the user's home directory will have
-changed. One would build bencode_pretty on each "slot", generate the script on the
-slot from which the rtorrent installation is being copied, edit the home directory appearing
-in the generated script using a "replace all" operation in a text editor, place the edited
-script onto the new slot, and run it on the new slot. The "*.rtorrent" files
-that get generated then replace the previous ones on the new slot.
+changed. One would:
+
+<ol>
+<li>Build bencode_pretty on each "slot".
+<li>Generate the script on the slot from which the rtorrent installation is being copied.
+<li>Edit the home directory appearing in the generated script using a "replace all"
+operation in a text editor.
+<li>Place the edited script onto the new slot.
+<li>Run the edited script on the new slot.
+</ol>
+The "*.rtorrent" files that get generated then replace the previous ones on the new slot.
 </html>
