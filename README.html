@@ -62,7 +62,7 @@ you will have changed some string(s) for tracker URL-s or file paths.
 <p>There is also a <b><u>bash script</u></b>: "bencode_many_prettiest.sh". This should
 called like this (for example):
 <pre>
-pushd ~/bencode_pretty
+pushd ~/bencode-pretty
 bash bencode_many_prettiest.sh ~/private/rtorrent/work/*.rtorrent > many_rtorrents.txt
 popd
 
@@ -71,7 +71,7 @@ The file that is produced ("many_rtorrents.txt" in the example) is itself a scri
 should be run in an empty directory within the directory where "bencode_unpretty" et al
 were built (it checks this) like this (for example):
 <pre>
-pushd ~/bencode_pretty
+pushd ~/bencode-pretty
 mkdir work_new
 pushd work_new
 bash ../many_rtorrents.txt
