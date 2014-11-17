@@ -69,9 +69,15 @@ bash bencode_many_prettiest.sh ~/private/rtorrent/work/*.rtorrent > many_rtorren
 popd
 
 </pre>
-The file that is produced ("many_rtorrents.txt" in the example) is itself a script. It
-should be run in an empty directory (it checks to be sure the current directory is
-empty). Either this empty directory should be within the directory where
+The file that is produced ("many_rtorrents.txt" in the example) is itself a script.
+It will contain a "prettiest" version of each of the bencoded files passed as arguments,
+along with enough bash script wrapping so that when it is run, it will recreate
+the bencoded version of the files in the current working directory. The idea is to
+allow a mass edit of many bencoded files using the "replace all" operation
+of a text editor. After it has been edited, it should be run in an empty
+directory (it checks to be sure the current directory is empty), in which the
+individual files will be recreated.. Either this empty directory
+should be within the directory where
 "bencode_unpretty" et al were built, or "bencode_unpretty" must be in the
 program lookup path ("PATH" environment variable) when the script is run 
 ("which bencode_unpretty"). So it could be called like this (for example):
