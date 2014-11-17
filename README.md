@@ -20,6 +20,7 @@ pushd bencode-pretty
 make
 make clean
 popd
+
 </pre>
 
 <p>I have tested with Linux, Cygwin and MSYS/MinGW.
@@ -27,7 +28,10 @@ popd
 <p>Building produces <b><u>three executables</u></b>: "bencode_pretty", "bencode_prettier" and "bencode_unpretty".
 Each is a filter, meant to be run like this:
 <pre>
+pushd ~
 cat some_file.torrent | ./bencode_pretty > some_file.torrent.txt
+popd
+
 </pre>
 
 <dl>
@@ -72,6 +76,7 @@ pushd work_new
 bash ../many_rtorrents.txt
 popd
 popd
+
 </pre>
 <p>
 <p>The idea in this example is that an rtorrent installation is being copied to another
