@@ -1,3 +1,10 @@
+#ifdef PRETTIEST
+#define PRETTIER
+#endif
+#ifdef PRETTIER
+#define PRETTY
+#endif
+
 #include <stdio.h>
 #include <fcntl.h>
 #include <ctype.h>
@@ -6,7 +13,6 @@ int curr;
 int ret;
 
 static int be_scan();
-static void get_next_char();
 
 int main(int argc, char *argv[]) {
   #if _WIN32
@@ -14,17 +20,7 @@ int main(int argc, char *argv[]) {
   _setmode(_fileno(stdout), _O_BINARY);
   //_setmode(_fileno(stderr), _O_BINARY);
   #endif
-  get_next_char();
   return be_scan();
-}
-
-static void get_next_char() {
-  curr = fgetc(stdin);
-  #ifdef UNPRETTY
-  while (!feof(stdin) && curr == '\n') {
-    curr = fgetc(stdin);
-  }
-  #endif
 }
 
 #define check_eof() _check_eof(__LINE__)
@@ -48,13 +44,65 @@ static int _bad_char(int line) {
   return 1;
 }
 
+#define NEWLINE
+#define INDENT_MORE
+#define INDENT_LESS
+
+#ifdef PRETTIER
+#undef NEWLINE
+#define INDENT
+
+#ifdef PRETTIEST
+
+#undef INDENT_MORE
+#undef INDENT_LESS
+#undef INDENT
+#define INDENT_MORE indent_more();
+#define INDENT_LESS indent_less();
+#define INDENT indent();
+
+static indent_level = 0;
+static void indent_more() {
+  indent_level++;
+}
+static void indent_less() {
+  if (indent_level > 0) indent_level--;
+  else internal_error();
+}
+static void indent() {
+  int cnt;
+  for (cnt = indent_level; cnt > 0; cnt--) fputc(' ', stdout);
+}
+#endif // PRETTIEST
+
+#define NEWLINE new_line();
+static char at_start = 1;
+static void new_line() {
+  if (!at_start) fputc('\n', stdout);
+  at_start = 0;
+  INDENT
+}
+
+#endif // PRETTIER
+
+#define INDENT_SKIP indent_skip();
+static void indent_skip() {
+  #ifdef UNPRETTY
+  while (!feof(stdin) && ( curr == ' ' || curr == '\n')) {
+    curr = fgetc(stdin);
+  }
+  #endif
+}
+
+static void get_next_char() {
+  curr = fgetc(stdin);
+}
+
 static int be_scan_element();
-static int be_scan_list();
-static int be_scan_dict();
-static int be_scan_int();
-static int be_scan_str();
 
 static int be_scan() {
+  get_next_char();
+  INDENT_SKIP
   while (!feof(stdin)) {
     //fputs("<be_scan>", stdout);
     if ((ret = be_scan_element())) return ret;
@@ -62,7 +110,13 @@ static int be_scan() {
   return 0;
 }
 
+static int be_scan_list();
+static int be_scan_dict();
+static int be_scan_int();
+static int be_scan_str();
+
 static int be_scan_element() {
+  if (feof(stdin)) return 0;
   switch (curr) {
     case 'l':
       if ((ret = be_scan_list())) return ret;
@@ -87,55 +141,58 @@ static int be_scan_element() {
   return 0;
 }
 
-static void put_get_next() {
+static void put_get_next_char() {
   fputc(curr, stdout);
   get_next_char();
 }
 
 static int be_scan_list() {
-  put_get_next();
-  #ifdef PRETTIER
-  fputc('\n', stdout);
-  #endif
+  NEWLINE
+  INDENT_MORE
+  put_get_next_char();
+  INDENT_SKIP
   while (!feof(stdin) && curr != 'e') {
     //fprintf(stdout, "<be_scan_list %c>", curr);
     if ((ret = be_scan_element())) return ret;
+    INDENT_SKIP
   };
   if ((ret = check_eof())) return ret;
-  put_get_next();
-  #ifdef PRETTIER
-  fputc('\n', stdout);
-  #endif
+  INDENT_LESS
+  NEWLINE
+  put_get_next_char();
+  INDENT_SKIP
   return 0;
 }
 
 static int be_scan_dict() {
-  put_get_next();
-  #ifdef PRETTIER
-  fputc('\n', stdout);
-  #endif
+  NEWLINE
+  INDENT_MORE
+  put_get_next_char();
+  INDENT_SKIP
   while (!feof(stdin) && curr != 'e') {
     if ((ret = be_scan_str())) return ret;
+    INDENT_MORE
     if (((ret = be_scan_element()))) return ret;
+    INDENT_LESS
+    INDENT_SKIP
   };
   if ((ret = check_eof())) return ret;
-  put_get_next();
-  #ifdef PRETTIER
-  fputc('\n', stdout);
-  #endif
+  INDENT_LESS
+  NEWLINE
+  put_get_next_char();
+  INDENT_SKIP
   return 0;
 }
 
 static int be_scan_int() {
-  put_get_next();
+  NEWLINE
+  put_get_next_char();
   while (!feof(stdin) && curr != 'e') {
-    put_get_next();
+    put_get_next_char();
   };
   if ((ret = check_eof())) return ret;
-  put_get_next();
-  #ifdef PRETTIER
-  fputc('\n', stdout);
-  #endif
+  put_get_next_char();
+  INDENT_SKIP
   return 0;
 }
 
@@ -153,7 +210,7 @@ static int be_scan_str() {
       return be_scan_str_for_mark();
     #endif
     default:
-      return internal_error();
+      return bad_char();
   };
 }  
 
@@ -187,6 +244,7 @@ int xdig_from(int curr) {
 static int be_scan_str_by_len() {
   long long len = 0;
   char stop = 0;
+  NEWLINE
   while (!feof(stdin) && !stop) {
     switch (curr) {
       case '0'...'9':
@@ -205,7 +263,7 @@ static int be_scan_str_by_len() {
   get_next_char();
   while (!feof(stdin) && len > 0) {
     if (curr == ESC || curr == MARK) fputc(ESC, stdout);
-    if(isprint(curr)) put_get_next();
+    if(isprint(curr)) put_get_next_char();
     else {
       fputc(ESC, stdout);
       fputc(xdig_to[curr >> 4], stdout);
@@ -216,9 +274,6 @@ static int be_scan_str_by_len() {
   }
   if ((ret = check_eof())) return ret;
   fputc(MARK, stdout);
-  #ifdef PRETTIER
-  fputc('\n', stdout);
-  #endif
   return 0;
 }
 #endif
@@ -278,6 +333,7 @@ static int be_scan_str_for_mark_buff(long long *len, struct buff *head, struct b
   if ((ret = check_eof())) return ret;
   if (curr != MARK) return be_scan_str_for_mark_buff(len, head, tail);
   get_next_char();
+  INDENT_SKIP
   fprintf(stdout, "%lli:", *len);
   while (head) {
     buff_out(head);

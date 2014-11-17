@@ -13,17 +13,19 @@ after editing.
 "bencoding" in <a target=_blank href="http://bittorrent.org/beps/bep_0003.html">http://bittorrent.org/beps/bep_0003.html</a>
 </ul>
 
-<p>To download this repository and build, in an appropriate location:
+<p>To download this repository and build, in the user's home directory:
 <pre>
+pushd ~
 git clone https://github.com/tool-maker/bencode-pretty
 pushd bencode-pretty
 make
 make clean
+popd
 </pre>
 
 <p>I have tested with Linux, Cygwin and MSYS/MinGW.
 
-<p>Building produces three executables: "bencode_pretty", "bencode_prettier" and "bencode_unpretty".
+<p>Building produces <b><u>three executables</u></b>: "bencode_pretty", "bencode_prettier" and "bencode_unpretty".
 Each is a filter, meant to be run like this:
 <pre>
 cat some_file.torrent | ./bencode_pretty > some_file.torrent.txt
@@ -42,11 +44,43 @@ The resulting file will have a single line of text.
 <dd>
 The same as "bencode_pretty" except that newline characters are inserted
 so that each bencode element occupies its own line. No carriage returns are
-inserted. So on Windows use an editor such as <a target=_blank href="http://notepad-plus-plus.org/">Notepad++</a>.
+inserted. So on Windows use an editor such as
+<a target=_blank href="http://notepad-plus-plus.org/">Notepad++</a>.
+<p>
+<dt><b>bencode_prettiest</b>
+<dd>
+The same as "bencode_prettier" except that indents are also inserted so that
+the logical structure of the data is more apparent.
 <p>
 <dt><b>bencode_unpretty</b>
 <dd>
-Takes "pretty" or "prettier" files and recreates bencode. The idea is that
+Takes "pretty", "prettier" or "prettiest" files and recreates bencode. The idea is that
 you will have changed some string(s) for tracker URL-s or file paths.
+</dl>
 <p>
+<p>There is also a <b><u>bash script</u></b>: "bencode_many_prettiest.sh". This should
+called like this (for example):
+<pre>
+bash bencode_many_prettiest.sh ~/private/rtorrent/work/*.rtorrent > many_rtorrents.txt
+</pre>
+The file that is produced ("many_rtorrents.txt" in the example) is itself a script. It
+should be run in an empty directory within the directory where "bencode_unpretty" et al
+were built (it checks this) like this (for example):
+<pre>
+pushd ~/bencode_pretty
+mkdir work_new
+pushd work_new
+bash ../many_rtorrents.txt
+popd
+popd
+</pre>
+<p>
+<p>The idea in this example is that an rtorrent installation is being copied to another
+server or under a different user (a different "slot" on a seedbox for example) where
+the absolute path for the user's home directory will have
+changed. One would build bencode_pretty on each "slot", generate the script on the
+slot from which the rtorrent installation is being copied, edit the home directory appearing
+in the generated script using a "replace all" operation in a text editor, place the edited
+script onto the new slot, and run it on the new slot. The "*.rtorrent" files
+that get generated then replace the previous ones on the new slot.
 </html>
