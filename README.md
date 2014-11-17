@@ -28,10 +28,7 @@ popd
 <p>Building produces <b><u>three executables</u></b>: "bencode_pretty", "bencode_prettier" and "bencode_unpretty".
 Each is a filter, meant to be run like this:
 <pre>
-pushd ~/bencode_pretty
 cat some_file.torrent | ./bencode_pretty > some_file.torrent.txt
-popd
-
 </pre>
 
 <dl>
@@ -64,7 +61,10 @@ you will have changed some string(s) for tracker URL-s or file paths.
 <p>There is also a <b><u>bash script</u></b>: "bencode_many_prettiest.sh". This should
 called like this (for example):
 <pre>
+pushd ~/bencode_pretty
 bash bencode_many_prettiest.sh ~/private/rtorrent/work/*.rtorrent > many_rtorrents.txt
+popd
+
 </pre>
 The file that is produced ("many_rtorrents.txt" in the example) is itself a script. It
 should be run in an empty directory within the directory where "bencode_unpretty" et al
