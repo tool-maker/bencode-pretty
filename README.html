@@ -38,7 +38,7 @@ cat some_file.torrent | ./bencode_pretty > some_file.torrent.txt
 <dl>
 <dt><b>bencode_pretty</b>
 <dd>
-Modifies the encoding of strings (see the references above) so that there is
+<p>Modifies the encoding of strings (see the references above) so that there is
 no length field preceding it, enclosing in quotes (") instead. And within the
 strings non-printable characters are encoded using "," as an escape character
 (because "," seems unlikely to appear in either tracker URL-s or file paths).
@@ -46,24 +46,27 @@ The resulting file will have a single line of text.
 <p>
 <dt><b>bencode_prettier</b>
 <dd>
-The same as "bencode_pretty" except that newline characters are inserted
+<p>The same as "bencode_pretty" except that newline characters are inserted
 so that each bencode element occupies its own line. No carriage returns are
 inserted. So on Windows use an editor such as
 <a target=_blank href="http://notepad-plus-plus.org/">Notepad++</a>.
 <p>
 <dt><b>bencode_prettiest</b>
 <dd>
-The same as "bencode_prettier" except that indents are also inserted so that
+<p>The same as "bencode_prettier" except that indents are also inserted so that
 the logical structure of the data is more apparent.
 <p>
 <dt><b>bencode_unpretty</b>
 <dd>
-Takes "pretty", "prettier" or "prettiest" files and recreates bencode. The idea is that
+<p>Takes "pretty", "prettier" or "prettiest" files and recreates bencode. The idea is that
 you will have changed some string(s) for tracker URL-s or file paths.
 </dl>
 <p>
-<p>There is also a <b><u>bash script</u></b>: "bencode_many_prettiest.sh". This should
-called like this (for example):
+<p>There is also a <b><u>bash script</u></b>.
+<dl>
+<dt><b>bencode_many_prettiest.sh</b>
+<dd>
+<p>This should called like this (for example):
 <pre>
 pushd ~/bencode-pretty
 bash bencode_many_prettiest.sh ~/private/rtorrent/work/*.rtorrent > many_rtorrents.txt
@@ -105,5 +108,6 @@ operation in a text editor.
 <li>Place the edited script onto the new slot.
 <li>Run the edited script on the new slot.
 </ol>
-The "*.rtorrent" files that get generated then replace the previous ones on the new slot.
+<p>The "*.rtorrent" files that get generated then replace the previous ones on the new slot.
+</dl>
 </html>
