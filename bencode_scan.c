@@ -8,6 +8,8 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <ctype.h>
+#include <stdlib.h>
+#include <stddef.h>
 
 int curr;
 int ret;
@@ -280,66 +282,74 @@ static int be_scan_str_by_len() {
 
 #ifdef UNPRETTY
 
-#define blen 2000
+#define blen 50000
 typedef struct buff buff;
 struct buff {
-  struct buff *next;
+  buff *next;
   long long len;
   int byte[blen];
 };
-static int be_scan_str_for_mark_buff(long long *, struct buff *, struct buff *);
 
-static int be_scan_str_for_mark() {
-  long long len = 0;
-  get_next_char();
-  if ((ret = check_eof())) return ret;
-  return be_scan_str_for_mark_buff(&len, NULL, NULL);
-}
-
-static void buff_out(struct buff *b) {
+static void buff_out(buff *b) {
   int i;
   for (i = 0; i < b->len; i++) fputc(b->byte[i], stdout);
 }
 
-static int be_scan_str_for_mark_buff(long long *len, struct buff *head, struct buff *tail) {
-  struct buff b;
-  b.next = NULL;
-  b.len = 0;
-  if (!head) head = &b;
-  if (tail) tail->next = &b;
-  tail = &b;
-  while (!feof(stdin) && curr != MARK && b.len < blen) {
-    if (curr == ESC) {
-      get_next_char();
-      if ((ret = check_eof())) return ret;
-      if (curr != ESC && curr != MARK) {
-        int xdig, outc;
-        xdig = xdig_from(curr);
-        if (xdig < 0) return bad_char();
-        outc = xdig << 4;
+static int be_scan_str_for_mark() {
+  long long len = 0;
+  buff *head;
+  buff *tail;
+  get_next_char();
+  if ((ret = check_eof())) return ret;
+  len = 0;
+  head = NULL;
+  tail = NULL;
+  while (1) {
+    buff *b;
+    b = (buff *)malloc(sizeof(buff));
+    b->next = NULL;
+    b->len = 0;
+    if (!head) head = b;
+    if (tail) tail->next = b;
+    tail = b;
+    while (!feof(stdin) && curr != MARK && b->len < blen) {
+      if (curr == ESC) {
         get_next_char();
         if ((ret = check_eof())) return ret;
-        xdig = xdig_from(curr);
-        if (xdig < 0) return bad_char();
-        outc |= xdig;
-        curr = outc;
-      }
+        if (curr != ESC && curr != MARK) {
+          int xdig, outc;
+          xdig = xdig_from(curr);
+          if (xdig < 0) return bad_char();
+          outc = xdig << 4;
+          get_next_char();
+          if ((ret = check_eof())) return ret;
+          xdig = xdig_from(curr);
+          if (xdig < 0) return bad_char();
+          outc |= xdig;
+          curr = outc;
+        }
+      };
+      b->byte[b->len] = curr;
+      len++;
+      b->len++;
+      get_next_char();
     };
-    b.byte[b.len] = curr;
-    (*len)++;
-    b.len++;
+    if ((ret = check_eof())) return ret;
+    if (curr != MARK) {
+      continue;
+    }
     get_next_char();
+    INDENT_SKIP
+    fprintf(stdout, "%lli:", len);
+    while (head) {
+      buff *next;
+      buff_out(head);
+      next = head->next;
+      free(head);
+      head = next;
+    };
+    return 0;
   };
-  if ((ret = check_eof())) return ret;
-  if (curr != MARK) return be_scan_str_for_mark_buff(len, head, tail);
-  get_next_char();
-  INDENT_SKIP
-  fprintf(stdout, "%lli:", *len);
-  while (head) {
-    buff_out(head);
-    head = head->next;
-  };
-  return 0;
 }
 
 #endif
